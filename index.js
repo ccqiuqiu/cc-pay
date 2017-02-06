@@ -1,42 +1,29 @@
 /**
  * Created by cc on 2017/1/17.
  */
-const Payment = require('wechat-pay').Payment
-const qr = require('qr-image');
+var WxPay = require('./lib/wxpay')
+var AliPay = require('./lib/alipay')
 
-let payment
+module.exports = {
+  WxPay: WxPay,
+  AliPay: AliPay
+}
 
-let CcPay = function (initConfig) {
-  payment = new Payment(initConfig)
-  return this;
-};
-
-CcPay.prototype.getBrandWCPayRequestParams = function (order) {
-  order.trade_type = 'JSAPI'
-  return new Promise((resolve, reject) => {
-    payment.getBrandWCPayRequestParams(order, (err, payargs) => {
-      if (err) {
-        resolve({success: false, data: err.message || err })
-      } else {
-        resolve({success: true, data: payargs})
-      }
+let config = {
+  app_id: '2016073000127091',
+  private_key: './privateKey.txt',
+  public_key: './publicKey.txt',
+  dev: true,
+  notify_url: "http://localhost:8200"
+}
+let alipay = new AliPay(config)
+let re = alipay.getRequestURI({
+    biz_content: JSON.stringify({
+        body:  "支付测试",
+        subject: "支付测试",
+        out_trade_no: "201688888",
+        total_amount: 1.0,
+        product_code: "QUICK_WAP_PAY"
     })
-  })
-}
-CcPay.prototype.getWxQrCodePay = function (order) {
-  order.trade_type = 'NATIVE'
-  return new Promise((resolve, reject) => {
-    payment.getBrandWCPayRequestParams(order, (err, payargs) => {
-      if (err) {
-        resolve({success: false, data: err.message || err })
-      } else {
-        resolve({success: true, data: this.getQrCode(payargs.code_url)})
-      }
-    })
-  })
-}
-CcPay.prototype.getQrCode = function (text) {
-  return qr.imageSync(text, { type: 'svg' })
-}
-
-module.exports = CcPay
+});
+console.log(re)
