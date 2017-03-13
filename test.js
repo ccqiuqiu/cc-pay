@@ -52,8 +52,7 @@ let order = {
   attach: '{"type":"order","id":"507","no":"1489218313142507_507_7"}',
   out_trade_no: 'order_1489219191940798',
   total_fee: 1,
-  spbill_create_ip: '192.168.0.100',
-  trade_type: 'APP' 
+  spbill_create_ip: '192.168.0.100'
 }
 wxPay.getAppRequestParams(order).then(data => {
   console.log(data);
